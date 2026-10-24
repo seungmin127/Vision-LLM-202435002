@@ -453,8 +453,6 @@ def main():
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q") or key == 27:
                 break
-            if cv2.getWindowProperty("Memo Board", cv2.WND_PROP_VISIBLE) < 1:
-                break
 
     finally:
         if hand_detector is not None:
