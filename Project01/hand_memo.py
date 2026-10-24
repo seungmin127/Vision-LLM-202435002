@@ -11,7 +11,7 @@ project_folder = Path(__file__).resolve().parent
 model_path = project_folder / "hand_landmarker.task"
 save_folder = project_folder / "memos"
 save_hold_seconds = 1.0
-pen_color = (0, 180, 0)  # 초록색 펜만 사용하므로 메모 선과 커서도 초록색(BGR)
+pen_color = (110, 45, 15)  # 메모 선/펜촉 커서: 진한 남색(BGR, RGB로는 #0F2D6E)
 
 pipeline = (
     "v4l2src device=/dev/video0 ! "
@@ -67,11 +67,11 @@ def preprocess_pen(image):
     hsv_image = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
     # H: 색상, S: 색의 진하기(채도), V: 밝기
-    # 초록색에 맞춘 시작값.
-    lower_green = np.array([40, 70, 30], dtype=np.uint8)
-    upper_green = np.array([100, 255, 255], dtype=np.uint8)
+    # 진한 남색 펜의 HSV 시작 범위. 카메라와 조명에 맞게 미세 조정.
+    lower_navy = np.array([105, 75, 15], dtype=np.uint8)
+    upper_navy = np.array([130, 255, 200], dtype=np.uint8)
 
-    mask = cv2.inRange(hsv_image, lower_green, upper_green)
+    mask = cv2.inRange(hsv_image, lower_navy, upper_navy)
 
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     opened_mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
@@ -258,7 +258,7 @@ def make_camera_view(image, contour, center, tip_candidates, hand_landmarks, tip
     view = image.copy()
     height, width = image.shape[:2]
     if contour is not None:
-        cv2.drawContours(view, [contour], -1, (0, 255, 0), 1)
+        cv2.drawContours(view, [contour], -1, (200, 110, 45), 1)  # 윤곽선: 밝은 파랑
     if center is not None:
         cv2.circle(view, center, 3, (0, 255, 255), -1)
     for label, point in tip_candidates.items():
@@ -267,7 +267,7 @@ def make_camera_view(image, contour, center, tip_candidates, hand_landmarks, tip
     for hand in hand_landmarks:
         points = [(int(p.x * width), int(p.y * height)) for p in hand]
         for connection in vision.HandLandmarksConnections.HAND_CONNECTIONS:
-            cv2.line(view, points[connection.start], points[connection.end], (0, 255, 0), 1)
+            cv2.line(view, points[connection.start], points[connection.end], (200, 110, 45), 1)
     if tip is not None:
         cv2.circle(view, tip, 3, pen_color, -1)
     label = "Hand: unknown"
@@ -275,7 +275,7 @@ def make_camera_view(image, contour, center, tip_candidates, hand_landmarks, tip
         label = "Right hand -> left tip"
     elif hand_side == "Left":
         label = "Left hand -> right tip"
-    cv2.putText(view, label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 150, 0), 1)
+    cv2.putText(view, label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 110, 45), 1)
     return view
 
 
