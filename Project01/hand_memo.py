@@ -11,7 +11,7 @@ project_folder = Path(__file__).resolve().parent
 model_path = project_folder / "hand_landmarker.task"
 save_folder = project_folder / "memos"
 save_hold_seconds = 1.0
-pen_color = (110, 45, 15)  # 메모 선/펜촉 커서: 진한 남색(BGR, RGB로는 #0F2D6E)
+pen_color = (110, 45, 15)  # 메모 선/몸통 끝점 커서: 진한 남색(BGR, RGB로는 #0F2D6E)
 
 pipeline = (
     "v4l2src device=/dev/video0 ! "
@@ -67,7 +67,8 @@ def preprocess_pen(image):
     hsv_image = cv2.cvtColor(blurred_image, cv2.COLOR_BGR2HSV)
 
     # H: 색상, S: 색의 진하기(채도), V: 밝기
-    # 진한 남색 펜의 HSV 시작 범위. 카메라와 조명에 맞게 미세 조정.
+    # 진한 남색 볼펜 몸통의 HSV 시작 범위. 카메라와 조명에 맞게 미세 조정.
+    # S 하한으로 무채색을 줄이고, V 상한으로 밝은 파란색을 제한.
     lower_navy = np.array([105, 75, 15], dtype=np.uint8)
     upper_navy = np.array([130, 255, 200], dtype=np.uint8)
 
@@ -81,7 +82,7 @@ def preprocess_pen(image):
 
 
 def detect_pen(image, final_mask):
-    "윤곽과 중심점을 구한 뒤, 펜촉 후보를 검출"
+    "윤곽과 중심점을 구한 뒤, 몸통 끝점 후보를 검출"
     contours, _ = cv2.findContours(final_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     largest_contour = None
     center = None
@@ -98,53 +99,20 @@ def detect_pen(image, final_mask):
 
 
 def find_pen_tip(image, contour, center):
-    "펜 양 끝의 후보 A/B는 실제로 사용할 끝은 손에 따라 선택."
-    tip_candidates = {}
-    if center is None:
-        return tip_candidates
+    "남색 몸통 윤곽의 좌우 끝점을 A/B 후보로 반환. 기존 호출 인자는 유지."
+    if contour is None or len(contour) == 0 or center is None:
+        return {}
 
-    cX, cY = center
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray_image, 50, 150)
-
-    # 몸통 윤곽에 직선을 맞춥니다. vx, vy는 연필의 길이 방향.
-    vx, vy, x0, y0 = cv2.fitLine(contour, cv2.DIST_L2, 0, 0.01, 0.01).flatten()
-
-    # 각 윤곽점이 중심에서 길이 방향으로 얼마나 떨어져 있는지 계산.
+    # 몸통 바깥을 탐색하지 않고 검출된 윤곽점만 사용.
     points = contour.reshape(-1, 2)
-    body_position = (points[:, 0] - cX) * vx + (points[:, 1] - cY) * vy
-    end_a = body_position.min()
-    end_b = body_position.max()
-    body_length = end_b - end_a
+    x_coordinates = points[:, 0]
+    left_point = points[np.argmin(x_coordinates)]
+    right_point = points[np.argmax(x_coordinates)]
 
-    # 모든 픽셀에 대해 길이 방향 거리와 옆 방향 거리를 계산.
-    yy, xx = np.indices(gray_image.shape)
-    along = (xx - cX) * vx + (yy - cY) * vy
-    across = -(xx - cX) * vy + (yy - cY) * vx
-
-    # 양 끝 바깥으로 몸통 길이의 35%, 중심선에서 옆으로 3픽셀까지 탐색.
-    search_length = body_length * 0.35
-    for label in ("A", "B"):
-        if label == "A":
-            end_region = (along < end_a) & (along >= end_a - search_length)
-        else:
-            end_region = (along > end_b) & (along <= end_b + search_length)
-
-        search_region = end_region & (np.abs(across) <= 3)
-        edge_y, edge_x = np.where(search_region & (edges > 0))
-
-        if len(edge_x) > 0:
-            # 몸통에서 바깥으로 가장 멀리 있는 경계점을 끝을 후보.
-            positions = along[edge_y, edge_x]
-            if label == "A":
-                index = np.argmin(positions)
-            else:
-                index = np.argmax(positions)
-
-            candidate = (int(edge_x[index]), int(edge_y[index]))
-            tip_candidates[label] = candidate
-
-    return tip_candidates
+    return {
+        "A": (int(left_point[0]), int(left_point[1])),
+        "B": (int(right_point[0]), int(right_point[1])),
+    }
 
 
 def select_pen_tip(tip_candidates, center, hand_side):
@@ -227,7 +195,7 @@ def detect_hand(hand_detector, image):
 
 
 def choose_mode(hand_finger_states, tip):
-    "손 한 개의 자세와 펜촉 유무를 받아 동작 이름만 결정."
+    "손 한 개의 자세와 몸통 끝점 유무를 받아 동작 이름만 결정."
     hand_count = len(hand_finger_states)
     # 먼저 펜 유무와 관계없이 손모양 자체의 모드를 결정.
     gesture_mode = "PAUSE"
@@ -245,7 +213,7 @@ def choose_mode(hand_finger_states, tip):
             elif states[1:] == [False, False, False, False]:
                 gesture_mode = "DRAW"
 
-    # 펜촉을 놓치면 그리기/지우기를 중단.
+    # 몸통 끝점을 놓치면 그리기/지우기를 중단.
     mode = gesture_mode
     if tip is None and mode in ("DRAW", "ERASE"):
         mode = "PAUSE"
@@ -272,9 +240,9 @@ def make_camera_view(image, contour, center, tip_candidates, hand_landmarks, tip
         cv2.circle(view, tip, 3, pen_color, -1)
     label = "Hand: unknown"
     if hand_side == "Right":
-        label = "Right hand -> left tip"
+        label = "Right hand -> left end"
     elif hand_side == "Left":
-        label = "Left hand -> right tip"
+        label = "Left hand -> right end"
     cv2.putText(view, label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 110, 45), 1)
     return view
 
@@ -353,7 +321,7 @@ def main():
             image = cv2.resize(image, None, fx=scale, fy=scale)
             height, width = image.shape[:2]
 
-            # 2. 펜과 손을 검출하고, 손에 따라 사용할 펜촉 방향을 선택.
+            # 2. 펜과 손을 검출하고, 손에 따라 사용할 몸통 끝점 방향을 선택.
             final_mask = preprocess_pen(image)
             contour, center, tip_candidates = detect_pen(image, final_mask)
             hand_landmarks, hand_finger_states, hand_side = detect_hand(hand_detector, image)
@@ -393,7 +361,7 @@ def main():
             if canvas is None:
                 canvas = np.full((height, width, 3), 255, dtype=np.uint8)
 
-            # 3. 한 손의 자세와 펜촉 유무로 현재 동작을 결정.
+            # 3. 한 손의 자세와 몸통 끝점 유무로 현재 동작을 결정.
             mode = choose_mode(hand_finger_states, tip)
 
             # 손을 펼친 상태를 실제 시계로 1초 이상 유지해야 저장.
