@@ -17,6 +17,7 @@ Vision-LLM-202435002/
 │  ├─ cifar_10_gpu.py
 │  ├─ iou.py
 │  ├─ nms.py
+│  ├─ CIFAR10_CNN.pth 
 │  └─ README.md
 └─ src/
    ├─ images/
