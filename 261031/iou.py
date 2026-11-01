@@ -28,9 +28,9 @@ def calculate_iou(bbox_a, bbox_b):
     # TODO: ZeroDivisionError 주의
     return intersection_area / union_area
 
-apples1 = cv2.imread("src/images/two_apples1.png")
-apples2 = cv2.imread("src/images/two_apples2.png")
-apples3 = cv2.imread("src/images/two_apples3.png")
+apples1 = cv2.imread("../src/images/two_apples1.png")
+apples2 = cv2.imread("../src/images/two_apples2.png")
+apples3 = cv2.imread("../src/images/two_apples3.png")
 apples1_rgb = cv2.cvtColor(apples1, cv2.COLOR_BGR2RGB)
 apples2_rgb = cv2.cvtColor(apples2, cv2.COLOR_BGR2RGB)
 apples3_rgb = cv2.cvtColor(apples3, cv2.COLOR_BGR2RGB)
@@ -72,9 +72,9 @@ def get_contour(img_bgr):
 
     return cntr_red, cntr_grn
 
-apples1 = cv2.imread("src/images/two_apples1.png")
-apples2 = cv2.imread("src/images/two_apples2.png")
-apples3 = cv2.imread("src/images/two_apples3.png")
+apples1 = cv2.imread("../src/images/two_apples1.png")
+apples2 = cv2.imread("../src/images/two_apples2.png")
+apples3 = cv2.imread("../src/images/two_apples3.png")
 
 apples1_rgb = cv2.cvtColor(apples1, cv2.COLOR_BGR2RGB)
 apples2_rgb = cv2.cvtColor(apples2, cv2.COLOR_BGR2RGB)

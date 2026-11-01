@@ -61,14 +61,14 @@ test_transform = transforms.Compose([
 ])
 
 train_dataset = datasets.CIFAR10(
-    root="src/datasets",
+    root="../src/datasets",
     train=True,
     transform=train_transform,
     download=True,
 )
 
 test_dataset = datasets.CIFAR10(
-    root="src/datasets",
+    root="../src/datasets",
     train=False,
     transform=test_transform,
     download=True,
@@ -639,13 +639,13 @@ save_data = {
 
 torch.save(
     save_data,
-    "src/models/CIFAR10/CIFAR10_CNN.pth",
+    "../src/models/CIFAR10/CIFAR10_CNN.pth",
 )
 
 loaded_model = CIFAR10CNN()
 
 state_dict = torch.load(
-    "src/models/CIFAR10/CIFAR10_CNN.pth",
+    "../src/models/CIFAR10/CIFAR10_CNN.pth",
     map_location="cpu",
     weights_only=True,
 )

@@ -5,7 +5,7 @@ import numpy as np
 import cupy as cp
 import matplotlib.pyplot as plt
 
-IMAGE_PATH = "src/images/seagull.jpg"
+IMAGE_PATH = "../src/images/seagull.jpg"
 
 TARGET_WIDTH = 1280
 TARGET_HEIGHT = 720
