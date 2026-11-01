@@ -57,7 +57,7 @@ python -c "import cupy as cp; print('CuPy GPU count:', cp.cuda.runtime.getDevice
 저장소 최상위 폴더에서 아래 명령을 실행.
 
 ```bash
-python 261025/gpu_acceleration.py
+python 261031/gpu_acceleration.py
 ```
 
 이미지 경로가 `src/images/seagull.jpg`로 지정 -> 저장소 최상위 폴더에서 실행.
@@ -77,7 +77,7 @@ python -c "import torch; print('PyTorch CUDA:', torch.cuda.is_available())"
 저장소 최상위 폴더에서 아래 명령을 실행.
 
 ```bash
-python 261025/mnist_gpu.py
+python 261031/mnist_gpu.py
 ```
 
 데이터셋 경로가 `src/datasets`로 지정 -> 저장소 최상위 폴더에서 실행.
@@ -98,7 +98,7 @@ python -c "import torch; print('PyTorch CUDA:', torch.cuda.is_available())"
 
 ```bash
 python -c "from pathlib import Path; Path('src/models/CIFAR10').mkdir(parents=True, exist_ok=True)"
-python 261025/cifar_10_gpu.py
+python 261031/cifar_10_gpu.py
 ```
 
 데이터셋 경로가 `src/datasets`, 모델 저장 및 재로딩 경로가 `src/models/CIFAR10/CIFAR10_CNN.pth`로 지정 -> 저장소 최상위 폴더에서 실행. 데이터가 없으면 CIFAR-10을 다운로드하므로 인터넷 연결이 필요.
@@ -114,7 +114,7 @@ python -m pip install opencv-python numpy matplotlib scikit-image
 저장소 최상위 폴더에서 아래 명령을 실행.
 
 ```bash
-python 261025/iou.py
+python 261031/iou.py
 ```
 
 이미지 경로가 다음과 같이 지정 -> 세 이미지를 준비하고 저장소 최상위 폴더에서 실행.
@@ -134,7 +134,7 @@ python -m pip install opencv-python numpy matplotlib scikit-image
 저장소 최상위 폴더에서 아래 명령을 실행.
 
 ```bash
-python 261025/nms.py
+python 261031/nms.py
 ```
 
 ## 기타 참고 사항
