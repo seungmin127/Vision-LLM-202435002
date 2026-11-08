@@ -1,9 +1,3 @@
-"""자동 녹음 → Whisper CLI(CPU) → Gemma → Piper → aplay를 차례로 실행한다.
-
-Gemma와 Piper는 시작할 때 한 번 불러온다. Whisper CLI는 발화마다 모델을 읽는다.
-카메라의 새 대상 사전과 지금 대화의 대상 사전을 비교해 이전 답변을 버린다.
-같은 종류의 실물을 구별하는 물체 추적 ID는 사용하지 않는다.
-"""
 
 import json
 import os
