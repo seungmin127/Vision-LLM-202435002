@@ -1,3 +1,10 @@
+"""자동 녹음 → Whisper CLI(CPU) → Gemma → Piper → aplay를 차례로 실행한다.
+
+Gemma와 Piper는 시작할 때 한 번 불러온다. Whisper CLI는 발화마다 모델을 읽는다.
+카메라의 새 대상 사전과 지금 대화의 대상 사전을 비교해 이전 답변을 버린다.
+같은 종류의 실물을 구별하는 물체 추적 ID는 사용하지 않는다.
+"""
+
 import json
 import os
 import subprocess
@@ -58,6 +65,7 @@ def record_voice(shared, target, show_screen):
                         return None
                     continue
                 speech_started = True
+                print("음성 감지: 녹음을 시작합니다.", flush=True)
                 recorded_blocks = previous_blocks[:]
             recorded_blocks.append(samples)
             recorded_seconds += settings.BLOCK_SECONDS
@@ -322,11 +330,15 @@ def run_conversation(shared, records, show_screen):
                     continue
                 cue_needed = False
             try:
+                print("1. 마이크에서 말을 기다리는 중", flush=True)
                 audio = record_voice(shared, target, show_screen)
                 if audio is None:
+                    print("사용할 녹음이 없어 다시 기다립니다. 대상 변경이나 종료 때도 녹음을 취소합니다.", flush=True)
                     continue
+                print("2. 녹음 완료, Whisper 인식 시작", flush=True)
                 set_status(shared, "RECOGNIZING")
                 text = transcribe(audio, shared, target, show_screen)
+                print("3. Whisper 인식 결과:", repr(text), flush=True)
             except Exception as error:
                 report_error(shared, error)
                 shared["stop"].wait(0.5)
@@ -334,7 +346,7 @@ def run_conversation(shared, records, show_screen):
             if not text or not turn_is_current(shared, target):
                 continue
             text = text[:300]
-            print("아이: " + text)
+            print("아이: " + text, flush=True)
             remember(history, records, shared, target, "user", text, "whisper")
             command = get_voice_command(text)
 
@@ -368,7 +380,12 @@ def run_conversation(shared, records, show_screen):
             set_status(shared, "THINKING")
             source = "gemma"
             try:
+                print("4. Gemma에 전달한 말:", text, flush=True)
                 reply = generate_reply(gemma_model, history, shared, target, show_screen)
+                if reply is None:
+                    print("Gemma 응답 폐기: 대상 변경 또는 종료", flush=True)
+                else:
+                    print("5. Gemma가 생성한 답변:", reply, flush=True)
             except Exception as error:
                 report_error(shared, error)
                 reply = "방금 말한 내용을 조금 더 이야기해 줄래?"
