@@ -1,5 +1,3 @@
-"""궁그미 실행: 카메라 스레드 하나 + 메인에서 순서대로 진행하는 음성 대화."""
-
 import json
 import os
 import threading
