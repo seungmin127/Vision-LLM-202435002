@@ -1,0 +1,16 @@
+[
+  {
+    "time": "2026-11-08 13:16:20",
+    "object": null,
+    "role": "assistant",
+    "content": "안녕, 나는 궁그미야.",
+    "source": "greeting"
+  },
+  {
+    "time": "2026-11-08 13:20:42",
+    "object": "motorcycle",
+    "role": "assistant",
+    "content": "이 물건에 대해 어떤 점이 궁금하니?",
+    "source": "opening"
+  }
+]

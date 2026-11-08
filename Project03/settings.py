@@ -4,12 +4,11 @@ import os
 os.environ["YOLO_AUTOINSTALL"] = "false"
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = ROOT + "/models"
-YOLO_MODEL = MODEL_DIR + "/yolo11n.pt"
-HAND_MODEL = MODEL_DIR + "/hand_landmarker.task"
-GEMMA_MODEL = MODEL_DIR + "/google_gemma-4-E2B-it-Q4_K_M.gguf"
-WHISPER_MODEL = MODEL_DIR + "/speech/ggml-small.bin"
-PIPER_MODEL = MODEL_DIR + "/speech/ko_KR-kss-medium.onnx"
+MODEL_DIR = os.path.expanduser("~/Desktop/vision-llm/src/models")
+YOLO_MODEL = MODEL_DIR + "/YOLO/yolo11n.pt"
+HAND_MODEL = MODEL_DIR + "/MediaPipe/hand_landmarker.task"
+GEMMA_MODEL = MODEL_DIR + "/Gemma4/google_gemma-4-E2B-it-Q4_K_M.gguf"
+PIPER_MODEL = MODEL_DIR + "/Piper/ko_KR-kss-medium.onnx"
 
 # USB 카메라 GStreamer 파이프라인
 CAMERA_PIPELINE = (
@@ -21,7 +20,10 @@ CAMERA_PIPELINE = (
     "appsink drop=true max-buffers=1 sync=false"
 )
 
-WHISPER_PROGRAM = ROOT + "/tools/whisper/build/bin/whisper-cli"
+WHISPER_DIR = os.path.expanduser("~/Desktop/vision-llm/whisper.cpp")
+WHISPER_MODEL = WHISPER_DIR + "/models/ggml-base.bin"
+WHISPER_PROGRAM = WHISPER_DIR + "/build-cpu/bin/whisper-cli"
+
 STT_THREADS = 2                      # Whisper CPU 스레드 수
 GPU_LAYERS = -1                      # Gemma GPU 사용. CPU 실행은 0
 YOLO_DEVICE = "0"                   # YOLO CUDA GPU. CUDA가 없는 환경은 "cpu"로 직접 변경
@@ -37,7 +39,7 @@ HISTORY_MESSAGES = 8
 
 SAMPLE_RATE = 16000
 BLOCK_SECONDS = 0.05
-ENERGY_THRESHOLD = 0.012
+ENERGY_THRESHOLD = 0.0
 LISTEN_WAIT_SECONDS = 10
 MAX_SPEECH_SECONDS = 10
 END_SILENCE_SECONDS = 1.1

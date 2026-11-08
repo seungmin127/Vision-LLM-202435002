@@ -1,0 +1,114 @@
+[
+  {
+    "time": "2026-11-08 14:11:00",
+    "object": null,
+    "role": "assistant",
+    "content": "안녕, 나는 궁그미야.",
+    "source": "greeting"
+  },
+  {
+    "time": "2026-11-08 14:11:20",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "손에 닿는 부분이 어떤 모양이니?",
+    "source": "opening"
+  },
+  {
+    "time": "2026-11-08 14:11:34",
+    "object": "mouse",
+    "role": "user",
+    "content": "에이프로는 통거로",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:11:55",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "아, 통과하는 모양이구나.",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:12:10",
+    "object": "mouse",
+    "role": "user",
+    "content": "이 브러그는 어떻게 했어?",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:12:14",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "브러시는 어떻게 사용했어?",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:12:28",
+    "object": "mouse",
+    "role": "user",
+    "content": "이 물건은 어떻게 써?",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:12:32",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "이건 어떻게 써야 할까?",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:13:00",
+    "object": "mouse",
+    "role": "user",
+    "content": "(끝)",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:13:09",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "응, 이제 그만 이야기할까?",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:13:24",
+    "object": "mouse",
+    "role": "user",
+    "content": "영상 좀 준비를 미리 해줬으면 좋겠군요. 음소거를 해서 뭐 말로 설명해도 되니까 영상을 미리 미리 준비를 좀",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:13:30",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "음소거를 해서 말로 설명해도 괜찮아?",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:13:44",
+    "object": "mouse",
+    "role": "user",
+    "content": "영상은 다 준비됐죠? 영상이랑 갈교자로 밀리둔 것 같아요. 빠르게 생각해도",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:13:56",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "영상은 준비됐어. 갈교자랑 같이 있어.",
+    "source": "gemma"
+  },
+  {
+    "time": "2026-11-08 14:14:10",
+    "object": "mouse",
+    "role": "user",
+    "content": "(놀리는 소리) (놀리는 소리) (놀리는 소리)",
+    "source": "whisper"
+  },
+  {
+    "time": "2026-11-08 14:14:14",
+    "object": "mouse",
+    "role": "assistant",
+    "content": "그 소리들은 뭐야?",
+    "source": "gemma"
+  }
+]
