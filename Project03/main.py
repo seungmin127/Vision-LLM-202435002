@@ -1,3 +1,5 @@
+"""궁그미 실행: 카메라 스레드 하나 + 메인에서 순서대로 진행하는 음성 대화."""
+
 import json
 import os
 import threading
@@ -50,7 +52,12 @@ def show_camera(shared):
     window = "Gunggeumi - caregiver"
     cv2.imshow(window, display)
     key = cv2.waitKey(1) & 0xFF
-    if key in [27, ord("q")] or cv2.getWindowProperty(window, cv2.WND_PROP_VISIBLE) < 1:
+    if key in [27, ord("q")]:
+        print("종료 이유: Q 또는 Esc 키 입력")
+        shared["stop"].set()
+    elif cv2.getWindowProperty(window, cv2.WND_PROP_VISIBLE) == 0:
+        # -1까지 닫힘으로 처리하지 않는다. 닫힘 값 0일 때만 종료한다.
+        print("종료 이유: 보호자 화면 닫힘")
         shared["stop"].set()
 
 
@@ -90,7 +97,7 @@ def main():
         if not shared["stop"].is_set():
             conversation.run_conversation(shared, records, show_camera)
     except KeyboardInterrupt:
-        pass
+        print("종료 이유: Ctrl+C 입력")
     except Exception as error:
         print("궁그미 실행 오류: " + str(error))
     finally:
